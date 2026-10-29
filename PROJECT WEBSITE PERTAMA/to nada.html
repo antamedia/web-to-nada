@@ -1,0 +1,1179 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#100d15">
+<title>Surat Terakhir Untukmu</title>
+
+<style>
+
+:root {
+    --bg: #100d15;
+    --pink: #e9b2c4;
+    --paper: #fff8ef;
+    --ink: #493642;
+    --muted: #c6b3c2;
+    --gold: #d9c19a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: var(--bg);
+    color: #fff4f7;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+button {
+    font: inherit;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--pink);
+    outline-offset: 4px;
+}
+
+button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+
+.ambient {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 50% 15%,
+            #593044 0%, transparent 42%),
+        radial-gradient(ellipse at 15% 85%,
+            #29213b 0%, transparent 40%),
+        linear-gradient(160deg, #17111d, #0b0a10 75%);
+}
+
+.ambient::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: .12;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
+}
+
+#particles {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+
+.music-control {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 15px;
+    border: 1px solid #e9b2c444;
+    border-radius: 40px;
+    color: #f9eaf0;
+    background: #17111dcc;
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.music-icon {
+    color: var(--pink);
+    font-size: 17px;
+}
+
+.music-control.playing .music-icon {
+    animation: musicPulse 1.2s ease-in-out infinite;
+}
+
+
+.page {
+    width: min(100% - 32px, 850px);
+    margin: auto;
+    text-align: center;
+}
+
+.hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 0 45px;
+}
+
+.kicker {
+    color: var(--gold);
+    font: 10px Arial, sans-serif;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    animation: fadeIn 2s both;
+}
+
+.hero h1 {
+    margin-top: 25px;
+    font-size: clamp(38px, 8vw, 72px);
+    line-height: 1.15;
+    font-weight: normal;
+    letter-spacing: -1px;
+    text-shadow: 0 0 40px #e9b2c41c;
+    animation: titleIn 2s .3s both;
+}
+
+.hero h1 em {
+    color: var(--pink);
+    font-weight: normal;
+}
+
+.hero-description {
+    max-width: 430px;
+    margin: 23px auto 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.9;
+    animation: fadeIn 2s .8s both;
+}
+
+.scroll-note {
+    margin-top: 30px;
+    color: #bba3b5;
+    font: 10px Arial, sans-serif;
+    letter-spacing: 3px;
+    animation: fadeIn 2s 1.2s both;
+}
+
+
+.envelope-section {
+    padding: 35px 0 80px;
+}
+
+.section-kicker {
+    color: var(--gold);
+    font: 10px Arial, sans-serif;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.envelope-section h2 {
+    margin-top: 13px;
+    font-size: clamp(24px, 5vw, 35px);
+    font-weight: normal;
+}
+
+.envelope-section > p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.envelope-stage {
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+}
+
+.envelope {
+    position: relative;
+    width: min(330px, 83vw);
+    height: 205px;
+    cursor: pointer;
+    outline: none;
+    filter: drop-shadow(0 25px 35px #0008);
+    transform: translateY(0);
+    transition: transform .5s ease;
+}
+
+.envelope:hover {
+    transform: translateY(-5px);
+}
+
+.envelope:focus-visible {
+    outline: 2px solid var(--pink);
+    outline-offset: 8px;
+}
+
+.env-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+    background: #8d5b76;
+}
+
+.env-paper {
+    position: absolute;
+    z-index: 2;
+    top: 7%;
+    left: 7%;
+    width: 86%;
+    height: 90%;
+    padding: 28px 12px;
+    color: var(--ink);
+    background: var(--paper);
+    transition:
+        transform 1.3s .4s cubic-bezier(.2,.7,.2,1),
+        opacity .6s 1s;
+}
+
+.env-paper .paper-heart {
+    display: block;
+    color: #b46c89;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.env-paper small {
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.env-front {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: linear-gradient(135deg, #c18ca3, #a66d88);
+    clip-path: polygon(0 0, 50% 57%, 100% 0, 100% 100%, 0 100%);
+}
+
+.env-flap {
+    position: absolute;
+    z-index: 5;
+    inset: 0;
+    background: linear-gradient(150deg, #f0c8d5, #d9a5bb);
+    clip-path: polygon(0 0, 100% 0, 50% 60%);
+    transform-origin: top center;
+    transition: transform 1s ease;
+    backface-visibility: hidden;
+}
+
+.env-seal {
+    position: absolute;
+    z-index: 6;
+    top: 47%;
+    left: 50%;
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid #f7dce6;
+    background: #87455f;
+    color: #fff1f5;
+    font-size: 21px;
+    box-shadow: 0 3px 12px #54233b66;
+    transition: opacity .35s, transform .4s;
+}
+
+
+.envelope.open .env-flap {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.envelope.open .env-seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.5);
+}
+
+.envelope.open .env-paper {
+    transform: translateY(-145px);
+    opacity: 0;
+}
+
+.envelope.open {
+    cursor: default;
+}
+
+.open-label {
+    margin-top: -10px;
+    color: var(--pink);
+    font: 10px Arial, sans-serif;
+    letter-spacing: 3px;
+}
+
+
+.letter-wrap {
+    display: none;
+    padding: 10px 0 65px;
+}
+
+.letter-wrap.visible {
+    display: block;
+    animation: cinematicReveal 1.5s ease both;
+}
+
+.letter {
+    position: relative;
+    max-width: 650px;
+    margin: auto;
+    padding: clamp(28px, 7vw, 65px);
+    color: var(--ink);
+    background: var(--paper);
+    text-align: left;
+    box-shadow: 0 30px 90px #0005;
+}
+
+.letter::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border: 1px solid #cdb4b8;
+    pointer-events: none;
+}
+
+.letter-inner {
+    position: relative;
+}
+
+.letter-date {
+    margin-bottom: 35px;
+    color: #9a788b;
+    text-align: right;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.letter h2 {
+    margin-bottom: 28px;
+    font-size: clamp(26px, 5vw, 36px);
+    line-height: 1.35;
+    font-weight: normal;
+}
+
+.letter-body {
+    white-space: pre-line;
+    font-size: 15px;
+    line-height: 2.05;
+}
+
+.letter-signature {
+    margin-top: 32px;
+    color: #9d5878;
+    font-size: 15px;
+    line-height: 1.9;
+    font-style: italic;
+}
+
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.action {
+    min-height: 45px;
+    padding: 12px 18px;
+    border: 1px solid #d9a5bb88;
+    border-radius: 30px;
+    color: #f9eaf0;
+    background: #ffffff08;
+    cursor: pointer;
+    font-size: 12px;
+    transition: .3s;
+}
+
+.action:hover,
+.action.active {
+    color: #21151d;
+    background: var(--pink);
+    border-color: var(--pink);
+    transform: translateY(-2px);
+}
+
+.action.primary {
+    background: #d8a0b5;
+    color: #21151d;
+}
+
+
+.content-section {
+    display: none;
+    padding: 45px 0 65px;
+    animation: cinematicReveal 1s ease both;
+}
+
+.content-section.visible {
+    display: block;
+}
+
+.content-heading {
+    margin-bottom: 13px;
+    font-size: clamp(28px, 6vw, 40px);
+    font-weight: normal;
+}
+
+.content-description {
+    max-width: 440px;
+    margin: 0 auto 28px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    text-align: left;
+}
+
+.photo-card {
+    padding: 8px;
+    border: 1px solid #ffffff15;
+    background: #ffffff06;
+    transition: transform .35s, border-color .35s;
+}
+
+.photo-card:hover {
+    transform: translateY(-4px);
+    border-color: #e9b2c466;
+}
+
+.photo-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    background: #352536;
+    cursor: zoom-in;
+}
+
+.photo-card img:focus-visible {
+    outline: 2px solid var(--pink);
+}
+
+.photo-caption {
+    padding: 14px 6px 8px;
+    color: #f0dce5;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.photo-number {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--gold);
+    font: 9px Arial, sans-serif;
+    letter-spacing: 2px;
+}
+
+
+.final-card {
+    max-width: 600px;
+    margin: auto;
+    padding: clamp(28px, 7vw, 55px);
+    border: 1px solid #e9b2c433;
+    background: linear-gradient(145deg, #ffffff0c, #ffffff03);
+    box-shadow: 0 25px 75px #0002;
+}
+
+.final-heart {
+    margin-bottom: 25px;
+    color: var(--pink);
+    font-size: 37px;
+    animation: heartBeat 2s infinite;
+}
+
+.final-card h2 {
+    margin-bottom: 28px;
+    font-size: clamp(27px, 6vw, 39px);
+    font-weight: normal;
+    line-height: 1.4;
+}
+
+.final-copy {
+    color: #e5d5df;
+    font-size: 15px;
+    line-height: 2.1;
+    white-space: pre-line;
+}
+
+.final-signature {
+    margin-top: 28px;
+    color: var(--pink);
+    font-size: 14px;
+    font-style: italic;
+}
+
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 18px;
+    padding: 25px;
+    background: #09070df5;
+    backdrop-filter: blur(10px);
+}
+
+.lightbox.visible {
+    display: flex;
+    animation: fadeIn .3s ease;
+}
+
+.lightbox img {
+    max-width: 95%;
+    max-height: 75vh;
+    object-fit: contain;
+    box-shadow: 0 15px 60px #0008;
+}
+
+.lightbox-caption {
+    color: #f1dce5;
+    text-align: center;
+    font-size: 13px;
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    border: 1px solid #ffffff44;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    color: white;
+    background: #ffffff0b;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+
+footer {
+    padding: 30px 0 40px;
+    color: #8e7888;
+    font: 9px Arial, sans-serif;
+    letter-spacing: 4px;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes titleIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+        filter: blur(7px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes cinematicReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+
+@keyframes musicPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+@media (max-width: 480px) {
+    .music-control {
+        top: 12px;
+        right: 12px;
+        padding: 9px 12px;
+        font-size: 10px;
+    }
+
+    .envelope-stage {
+        min-height: 300px;
+    }
+
+    .envelope {
+        height: 185px;
+    }
+
+    .gallery {
+        gap: 9px;
+    }
+
+    .photo-card {
+        padding: 5px;
+    }
+
+    .photo-caption {
+        padding: 10px 5px;
+        font-size: 11px;
+    }
+
+    .actions {
+        gap: 9px;
+    }
+
+    .action {
+        padding: 11px 13px;
+        font-size: 11px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="ambient"></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+
+<!-- MUSIK: LETAKKAN musik.mp3 DI FOLDER YANG SAMA -->
+<audio id="bgMusic" loop preload="none">
+    <source src="musik.mp3" type="audio/mpeg">
+</audio>
+
+<button class="music-control" id="musicButton"
+        onclick="toggleMusic()" aria-pressed="false">
+    <span class="music-icon" id="musicIcon">♫</span>
+    <span id="musicLabel">PUTAR MUSIK</span>
+</button>
+
+<main class="page">
+
+    
+    <header class="hero">
+        <div class="kicker">Sebuah surat yang segarusnya tak pernah terkirim</div>
+
+        <!-- UBAH JUDUL UTAMA DI SINI -->
+        <h1>Untukmu,<br><em>yang pernah ku anggap sebagai rumah
+             .</em></h1>
+
+        <p class="hero-description">
+            Ada cerita yang ingin kusampaikan sekali lagi.
+            Bukan untuk mengubah akhir cerita kita,
+            melainkan untuk mengucapkan selamat tinggal
+            dengan cara yang seharusnya.
+        </p>
+
+        <div class="scroll-note">SEBUAH KENANGAN · SEBUAH PERPISAHAN</div>
+    </header>
+
+    <!-- =================================
+         AMPLOP
+    ================================== -->
+    <section class="envelope-section" id="envelopeSection">
+        <div class="section-kicker">Sebuah pesan untukmu</div>
+        <h2>Sebelum kita benar-benar memilih jalan kita masing masing...</h2>
+        <p>Sentuh amplop ini untuk baca surat ku ya.</p>
+
+        <div class="envelope-stage">
+            <div class="envelope"
+                 id="envelope"
+                 role="button"
+                 tabindex="0"
+                 aria-label="Buka amplop"
+                 aria-expanded="false"
+                 onclick="openLetter()">
+
+                <div class="env-back"></div>
+
+                <div class="env-paper">
+                    <span class="paper-heart">♡</span>
+                    <small>
+                        Untuk seseorang<br>
+                        yang pernah begitu berarti.
+                    </small>
+                </div>
+
+                <div class="env-front"></div>
+                <div class="env-flap"></div>
+                <div class="env-seal">♡</div>
+            </div>
+        </div>
+
+        <div class="open-label" id="openLabel">
+            KLIK UNTUK MEMBUKA
+        </div>
+    </section>
+
+    
+    <section class="letter-wrap" id="letterWrap">
+
+        <article class="letter">
+            <div class="letter-inner">
+
+                <div class="letter-date">
+                    Untukmu, dari seseorang yang pernah menyayangimu dan mengagumimu
+                </div>
+
+                <!-- UBAH JUDUL SURAT -->
+                <h2>Terima kasih sudah pernah hadir dalam hidupku.</h2>
+
+                <!-- UBAH ISI SURAT DI BAWAH INI -->
+                <div class="letter-body">Hai Nada ini aku ian, iya ian orang yang selama ini gak punya semangat untuk hidup tapi sering buat kamu tertawa hehe,
+                    dan hari ini aku belajar ngoding hanya untuk balas pesan kamu.
+                    Karna aku tau kamu buatnya butuh usaha bukan hanya sekedar pesan biasa.
+                    dan sebenarnya dari tadi aku ga tidur. dan maaf bila belum sempurna
+
+                    Berawal dari sebuah game kita bertemu hingga kita sedekat ini, kita mengal satu sama lain. 
+                    Kita bertukar cerita, bercanda bersama, bermain game bersama dan tertawa bersama
+                    hingga pada akhirnya hal yang ku takuti selama ini beneran terjadi.
+                
+                Aku tidak pernah membayangkan bahwa suatu hari kita akan sampai di titik ini.
+
+Terima kasih sudah pernah menjadi bagian dari hidupku. Terima kasih untuk setiap tawa, cerita, perhatian, dan kenangan yang kita ciptakan bersama.
+
+Maaf untuk semua kekuranganku. Maaf jika ada kata-kata yang melukaimu, harapan yang tidak mampu kupenuhi, atau hal-hal yang seharusnya bisa kulakukan dengan lebih baik.
+
+Aku pernah berharap kita akan berjalan lebih jauh. Aku pernah membayangkan banyak hal yang ingin kita lalui bersama.
+
+Namun, ternyata tidak semua cerita yang kita perjuangkan harus berakhir dengan tetap bersama.
+
+Aku tidak ingin menganggap semua yang pernah kita jalani sebagai kesalahan. Bagiku, semuanya pernah nyata. Kamu pernah berarti, dan kebahagiaan yang kita rasakan juga pernah nyata.
+
+Sekarang, mungkin kita perlu belajar menerima bahwa ada hal-hal yang harus dilepaskan, meskipun hati belum sepenuhnya siap.
+
+Aku tidak tahu bagaimana waktu akan membuat kita mengenang cerita ini nanti.
+
+Yang aku tahu, aku berterima kasih karena pernah mengenalmu.</div>
+
+                <!-- UBAH KALIMAT PENUTUP -->
+                <div class="letter-signature">
+                    Jaga dirimu baik-baik, ya.<br>
+                    Terima kasih untuk semuanya dan semoga kita bisa sukses bersama.
+                </div>
+
+            </div>
+        </article>
+
+        <nav class="actions" aria-label="Pilihan surat">
+
+            <button class="action primary" onclick="showSection('memory')">
+                ♡ Lihat Kenangan
+            </button>
+
+            <button class="action" onclick="showSection('finalMessage')">
+                ✉ Pesan Terakhir
+            </button>
+
+            <button class="action" onclick="showSection('letterWrap')">
+                ↶ Baca Surat Lagi
+            </button>
+
+        </nav>
+    </section>
+
+   
+    <section class="content-section" id="memory">
+
+        <div class="section-kicker">Yang pernah kita lakukan walau hanya dalam pengalaman virtual</div>
+        <h2 class="content-heading">Potongan Cerita Kita</h2>
+
+        <p class="content-description">
+            Ada momen yang mungkin tidak bisa kita ulang lagi.
+            Namun, kita pernah di masa itu,
+            tertawa bersama, dan menjadi bagian dari cerita yang sama.
+        </p>
+
+        <div class="gallery">
+
+           
+
+            <div class="photo-card">
+                <img src="foto/kenangan1.jpg"
+                     alt="Kenangan pertama"
+                     tabindex="0"
+                     onclick="zoomPhoto(this)"
+                     onkeydown="if(event.key==='Enter')zoomPhoto(this)"
+                     onerror="this.closest('.photo-card').hidden=true">
+                <div class="photo-caption">
+                    <span class="photo-number">KENANGAN 01</span>
+                    Hari ketika semuanya terasa begitu menyenangkan.
+                </div>
+            </div>
+
+            <div class="photo-card">
+                <img src="foto/kenangan2.jpg"
+                     alt="Kenangan kedua"
+                     tabindex="0"
+                     onclick="zoomPhoto(this)"
+                     onkeydown="if(event.key==='Enter')zoomPhoto(this)"
+                     onerror="this.closest('.photo-card').hidden=true">
+                <div class="photo-caption">
+                    <span class="photo-number">KENANGAN 02</span>
+                    Salah satu hari dimana kamu ngirim gambar ini.
+                </div>
+            </div>
+
+            <div class="photo-card">
+                <img src="foto/kenangan3.jpg"
+                     alt="Kenangan ketiga"
+                     tabindex="0"
+                     onclick="zoomPhoto(this)"
+                     onkeydown="if(event.key==='Enter')zoomPhoto(this)"
+                     onerror="this.closest('.photo-card').hidden=true">
+                <div class="photo-caption">
+                    <span class="photo-number">KENANGAN 03</span>
+                    Momen kecil yang ternyata begitu berarti.
+                </div>
+            </div>
+
+            <div class="photo-card">
+                <img src="foto/kenangan4.jpg"
+                     alt="Kenangan keempat"
+                     tabindex="0"
+                     onclick="zoomPhoto(this)"
+                     onkeydown="if(event.key==='Enter')zoomPhoto(this)"
+                     onerror="this.closest('.photo-card').hidden=true">
+                <div class="photo-caption">
+                    <span class="photo-number">KENANGAN 04</span>
+                    Bagian cerita yang akan kusimpan dalam ingatan.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button class="action primary"
+                    onclick="showSection('finalMessage')">
+                Baca Pesan Terakhir
+            </button>
+
+            <button class="action"
+                    onclick="showSection('letterWrap')">
+                Kembali ke Surat
+            </button>
+        </div>
+    </section>
+
+   
+    <section class="content-section" id="finalMessage">
+
+        <div class="final-card">
+
+            <div class="final-heart">♡</div>
+
+            
+            <h2>Jika ini benar-benar akhir kita...</h2>
+
+            
+            <div class="final-copy">Aku ingin kamu tahu bahwa aku pernah benar-benar bahagia bersamamu.
+
+Terima kasih karena pernah hadir di hari-hariku, mendengarkan ceritaku, dan membuat hal-hal sederhana terasa istimewa.
+
+Maaf jika pada akhirnya aku bukan seseorang yang bisa menemanimu sampai tujuan.
+
+Aku tidak bisa menjanjikan bahwa aku akan segera melupakan semuanya. Ada kenangan yang mungkin masih akan terasa sesekali, bahkan ketika waktu sudah berjalan jauh.
+
+Namun, aku ingin belajar menerima bahwa kita tidak harus terus bersama agar semua yang pernah kita jalani tetap memiliki arti.
+
+Aku berharap hidup memperlakukanmu dengan baik. Semoga kamu menemukan ketenangan, kebahagiaan, dan hal-hal baik yang selama ini kamu harapkan.
+
+Dan jika suatu hari kita hanya menjadi dua orang yang pernah saling mengenal, aku berharap kita bisa mengingat cerita ini tanpa saling membenci.
+
+Terima kasih sudah pernah menjadi bagian dari hidupku.
+
+Kali ini, aku pamit.</div>
+
+            
+            <div class="final-signature">
+                Dengan tulus,<br>
+                seseorang yang pernah menyayangimu.
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="action" onclick="showSection('memory')">
+                ♡ Lihat Kenangan Lagi
+            </button>
+
+            <button class="action" onclick="showSection('letterWrap')">
+                ↶ Kembali ke Surat
+            </button>
+        </div>
+    </section>
+
+    <footer>
+        SEBUAH AKHIR · SEBUAH AWAL
+    </footer>
+
+</main>
+
+
+<div class="lightbox" id="lightbox"
+     role="dialog" aria-modal="true"
+     aria-label="Foto kenangan"
+     onclick="closeZoom()">
+
+    <button class="close-lightbox"
+            aria-label="Tutup foto"
+            onclick="closeZoom()">×</button>
+
+    <img id="zoomedImage" src="" alt="Foto kenangan diperbesar">
+
+    <p class="lightbox-caption" id="zoomCaption">
+        Sebuah kenangan.
+    </p>
+</div>
+
+<script>
+
+let letterOpened = false;
+
+function openLetter() {
+    if (letterOpened) return;
+
+    letterOpened = true;
+
+    const envelope = document.getElementById("envelope");
+    const letter = document.getElementById("letterWrap");
+    const label = document.getElementById("openLabel");
+
+    envelope.classList.add("open");
+    envelope.setAttribute("aria-expanded", "true");
+    envelope.setAttribute("aria-disabled", "true");
+    label.textContent = "SEBUAH PESAN UNTUKMU";
+
+   
+    setTimeout(() => {
+        letter.classList.add("visible");
+
+        letter.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 1050);
+}
+
+document.getElementById("envelope").addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openLetter();
+    }
+});
+
+
+function showSection(id) {
+    const letter = document.getElementById("letterWrap");
+    const memory = document.getElementById("memory");
+    const finalMessage = document.getElementById("finalMessage");
+
+    if (!letterOpened) {
+        openLetter();
+
+        // Surat harus terbuka sebelum pindah bagian.
+        setTimeout(() => showSection(id), 1500);
+        return;
+    }
+
+    memory.classList.remove("visible");
+    finalMessage.classList.remove("visible");
+
+    if (id === "memory") {
+        memory.classList.add("visible");
+    } else if (id === "finalMessage") {
+        finalMessage.classList.add("visible");
+    }
+
+    const target = document.getElementById(id);
+
+    setTimeout(() => {
+        target.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 80);
+}
+
+
+const music = document.getElementById("bgMusic");
+const musicButton = document.getElementById("musicButton");
+const musicLabel = document.getElementById("musicLabel");
+const musicIcon = document.getElementById("musicIcon");
+
+async function toggleMusic() {
+    if (music.paused) {
+        try {
+            await music.play();
+
+            musicButton.classList.add("playing");
+            musicButton.setAttribute("aria-pressed", "true");
+            musicLabel.textContent = "JEDA MUSIK";
+            musicIcon.textContent = "♫";
+        } catch (error) {
+            musicLabel.textContent = "CEK FILE MUSIK";
+            console.error("Musik tidak dapat diputar:", error);
+        }
+    } else {
+        music.pause();
+
+        musicButton.classList.remove("playing");
+        musicButton.setAttribute("aria-pressed", "false");
+        musicLabel.textContent = "PUTAR MUSIK";
+        musicIcon.textContent = "♫";
+    }
+}
+
+music.addEventListener("pause", () => {
+    musicButton.classList.remove("playing");
+    musicButton.setAttribute("aria-pressed", "false");
+    musicLabel.textContent = "PUTAR MUSIK";
+});
+
+music.addEventListener("play", () => {
+    musicButton.classList.add("playing");
+    musicButton.setAttribute("aria-pressed", "true");
+    musicLabel.textContent = "JEDA MUSIK";
+});
+
+
+function zoomPhoto(img) {
+    const lightbox = document.getElementById("lightbox");
+    const zoomedImage = document.getElementById("zoomedImage");
+    const caption = img.closest(".photo-card")
+        .querySelector(".photo-caption");
+
+    zoomedImage.src = img.src;
+    zoomedImage.alt = img.alt;
+
+    document.getElementById("zoomCaption").textContent =
+        caption.innerText.replace(/\s+/g, " ").trim();
+
+    lightbox.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    document.querySelector(".close-lightbox").focus();
+}
+
+function closeZoom() {
+    document.getElementById("lightbox").classList.remove("visible");
+    document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeZoom();
+});
+
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+let particleWidth = 0;
+let particleHeight = 0;
+let animationFrame;
+const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
+
+function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    particleWidth = window.innerWidth;
+    particleHeight = window.innerHeight;
+
+    canvas.width = particleWidth * dpr;
+    canvas.height = particleHeight * dpr;
+
+    canvas.style.width = particleWidth + "px";
+    canvas.style.height = particleHeight + "px";
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    particles = Array.from(
+        { length: Math.min(45, Math.floor(particleWidth / 12)) },
+        () => ({
+            x: Math.random() * particleWidth,
+            y: Math.random() * particleHeight,
+            r: Math.random() * 1.5 + .3,
+            speed: Math.random() * .25 + .08,
+            alpha: Math.random() * .5 + .15
+        })
+    );
+
+    drawParticles();
+}
+
+function drawParticles() {
+    ctx.clearRect(0, 0, particleWidth, particleHeight);
+
+    for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(238, 190, 211, ${p.alpha})`;
+        ctx.fill();
+
+        if (!reducedMotion) {
+            p.y -= p.speed;
+            p.x += Math.sin(p.y * .01) * .12;
+
+            if (p.y < -5) {
+                p.y = particleHeight + 5;
+                p.x = Math.random() * particleWidth;
+            }
+        }
+    }
+
+    if (!reducedMotion) {
+        animationFrame = requestAnimationFrame(drawParticles);
+    }
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+</script>
+
+</body>
+</html>
